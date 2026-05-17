@@ -40,6 +40,33 @@ string getRandomWord(const vector<string>& words) {
     return words[dist(rng)];
 }
 
+size_t countLetters(const string& word) {
+    size_t count = 0;
+    for (unsigned char c : word) {
+        // count bytes that are NOT continuation bytes (10xxxxxx)
+        if ((c & 0xC0) != 0x80) {
+            count++;
+        }
+    }
+    return count;
+}
+
+bool validateGuessWord(string guess, const vector<string>& words) {
+    int length = countLetters(guess);
+
+    if (length != 5) {
+        cout << "Twoje słowo musi mieć 5 liter" << endl;
+        return false;
+    }
+    for (int i = 0; i < words.size(); i++) {
+        if (guess == words[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 int main() {
     // fix Polish character encoding in console (output & input)
     SetConsoleOutputCP(CP_UTF8);
@@ -56,6 +83,12 @@ int main() {
 
     // get random word from answerWordList
     string answerWord = getRandomWord(answerWordList);
+
+    string guessWord;
+    cout << "Podaj słowo: ";
+    cin >> guessWord;
+
+    cout << validateGuessWord(guessWord, dictionary) << endl;
 
     return 0;
 }
