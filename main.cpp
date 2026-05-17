@@ -1,14 +1,45 @@
 #include <iostream>
 #include <windows.h>
+#include <fstream>
+#include <vector>
+#include <string>
 
 using namespace std;
+
+// function that loads words from a file
+vector<string> loadWordsFromFile(const string& filename) {
+    vector<string> words;
+    ifstream file(filename);
+
+    if (!file.is_open()) {
+        cerr << "Błąd: Nie można otworzyć pliku " << filename << endl;
+        return words;
+    }
+
+    string word;
+    while (getline(file, word)) {
+        if (!word.empty()) {
+            words.push_back(word);
+        }
+    }
+
+    file.close();
+    return words;
+}
 
 int main() {
     // fix Polish character encoding in console (output & input)
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
 
-    cout << "WORDLE" << endl;
+    // load dictionaries
+    vector<string> dictionary = loadWordsFromFile("../dictionary.txt");
+    vector<string> answerWordList = loadWordsFromFile("../answer_word_list.txt");
+
+    if (dictionary.empty() || answerWordList.empty()) {
+        cerr << "Błąd: Nie udało się wczytać słowników!" << endl;
+        return 1;
+    }
 
     return 0;
 }
