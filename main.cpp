@@ -51,6 +51,22 @@ size_t countLetters(const string& word) {
     return count;
 }
 
+bool validateGuessWord(string guess, const vector<string>& words) {
+    int length = countLetters(guess);
+
+    if (length != 5) {
+        cout << "Twoje słowo musi mieć 5 liter" << endl;
+        return false;
+    }
+    for (int i = 0; i < words.size(); i++) {
+        if (guess == words[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 int main() {
     // fix Polish character encoding in console (output & input)
     SetConsoleOutputCP(CP_UTF8);
@@ -71,6 +87,8 @@ int main() {
     string guessWord;
     cout << "Podaj słowo: ";
     cin >> guessWord;
+
+    cout << validateGuessWord(guessWord, dictionary) << endl;
 
     return 0;
 }
