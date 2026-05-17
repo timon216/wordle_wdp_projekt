@@ -40,6 +40,17 @@ string getRandomWord(const vector<string>& words) {
     return words[dist(rng)];
 }
 
+size_t countLetters(const string& word) {
+    size_t count = 0;
+    for (unsigned char c : word) {
+        // count bytes that are NOT continuation bytes (10xxxxxx)
+        if ((c & 0xC0) != 0x80) {
+            count++;
+        }
+    }
+    return count;
+}
+
 int main() {
     // fix Polish character encoding in console (output & input)
     SetConsoleOutputCP(CP_UTF8);
@@ -56,6 +67,10 @@ int main() {
 
     // get random word from answerWordList
     string answerWord = getRandomWord(answerWordList);
+
+    string guessWord;
+    cout << "Podaj słowo: ";
+    cin >> guessWord;
 
     return 0;
 }
