@@ -122,7 +122,7 @@ int main() {
 
     int guessCounter = 0;
 
-    while(guessCounter <= 6)
+    while(guessCounter < 6)
     {
         cout << "Podaj słowo: ";
         cin >> guessWord;
