@@ -51,6 +51,40 @@ size_t countLetters(const string& word) {
     return count;
 }
 
+// function that converts Polish characters to uppercase
+string toUpperCasePolish(string word) {
+    string result = "";
+
+    for (size_t i = 0; i < word.size();) {
+        // Check for 2-byte Polish uppercase letters
+        if (i + 1 < word.size()) {
+            string twoChar = word.substr(i, 2);
+
+            if (twoChar == "ą") { result += "Ą"; i += 2; continue; }
+            if (twoChar == "ć") { result += "Ć"; i += 2; continue; }
+            if (twoChar == "ę") { result += "Ę"; i += 2; continue; }
+            if (twoChar == "ł") { result += "Ł"; i += 2; continue; }
+            if (twoChar == "ń") { result += "Ń"; i += 2; continue; }
+            if (twoChar == "ó") { result += "Ó"; i += 2; continue; }
+            if (twoChar == "ś") { result += "Ś"; i += 2; continue; }
+            if (twoChar == "ź") { result += "Ź"; i += 2; continue; }
+            if (twoChar == "ż") { result += "Ż"; i += 2; continue; }
+        }
+
+        // change ASCII uppercase to lowercase
+        if (word[i] >= 'a' && word[i] <= 'z') {
+            result += char(word[i] - 32);
+        }
+        // Everything else stays as is
+        else {
+            result += word[i];
+        }
+
+        i++;
+    }
+    return result;
+}
+
 bool validateGuessWord(string guess, const vector<string>& words) {
     int length = countLetters(guess);
 
@@ -87,8 +121,7 @@ int main() {
     string guessWord;
     cout << "Podaj słowo: ";
     cin >> guessWord;
-
-    cout << validateGuessWord(guessWord, dictionary) << endl;
+    string guessUpper = toUpperCasePolish(guessWord);
 
     return 0;
 }
