@@ -119,9 +119,31 @@ int main() {
     string answerWord = getRandomWord(answerWordList);
 
     string guessWord;
-    cout << "Podaj słowo: ";
-    cin >> guessWord;
-    string guessUpper = toUpperCasePolish(guessWord);
+
+    int guessCounter = 0;
+
+    while(guessCounter < 6)
+    {
+        cout << "Podaj słowo: ";
+        cin >> guessWord;
+        string guessUpper = toUpperCasePolish(guessWord);
+        while(validateGuessWord(guessUpper, dictionary) != true)
+        {
+            cout << "Niepoprawne słowo! Podaj nowe: ";
+            cin >> guessWord;
+            guessUpper = toUpperCasePolish(guessWord);
+        }
+        if(answerWord == guessUpper)
+        {
+            cout << "Poprawna odpowiedź!" << endl;
+            break;
+        }
+        else
+        {
+            guessCounter++;
+            cout << "Zła odpowiedź! Pozostało " << 6 - guessCounter << " prób."<< endl;
+        }
+    }
 
     return 0;
 }
