@@ -100,6 +100,25 @@ bool validateGuessWord(string guess, const vector<string>& words) {
     return false;
 }
 
+// function that divides a single string into a vector of multiple substrings (letters)
+vector<string> wordLetters(const string& word) {
+    vector<string> result;
+    for (size_t i = 0; i < word.size();) {
+        // Check for 2-byte Polish uppercase letters in UTF-8
+        if (i + 1 < word.size()) {
+            string twoChar = word.substr(i, 2);
+            if (twoChar == "Ą" || twoChar == "Ć" || twoChar == "Ę" || twoChar == "Ł" || twoChar == "Ń" || twoChar == "Ó" || twoChar == "Ś" || twoChar == "Ź" ||twoChar == "Ż") {
+                result.push_back(twoChar);
+                i += 2;
+                continue;
+            }
+        }
+        string oneChar = word.substr(i, 1);
+        result.push_back(oneChar);
+        i++;
+    }
+    return result;
+}
 
 int main() {
     // fix Polish character encoding in console (output & input)
