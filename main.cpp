@@ -7,6 +7,18 @@
 #include <unordered_map>
 #include <array>
 
+// define ANSI escape sequence fragments to improve code readability
+#define Start "\x1b["
+#define textColor "38;2;"
+#define backgroundColor "48;2;"
+#define correctGreen "8;199;30"
+#define letteringWhite "255;255;255"
+#define wrongGrey "80;80;80"
+#define elsewhereYellow "212;157;4"
+#define boldText "1"
+#define End "m"
+#define Reset "\x1b[0m"
+
 using namespace std;
 
 // function that loads words from a file
@@ -156,6 +168,39 @@ array<int, 5> compareGuess(const vector<string>& answerWordLetters, const vector
     }
 
     return letterMarks;
+}
+
+// function that prints the colored game board
+void renderBoard(const vector<vector<string>>& storeWords, const vector<array<int, 5>>& storeMarks) {
+    // cycle through stored words
+    for (int i = 0; i < storeWords.size(); i++) {
+        // cycle through individual stored letters
+        for (int j = 0; j < storeWords[i].size(); j++) {
+            switch (storeMarks[i][j]) {
+                case 1:
+                    cout << Start << boldText << End;
+                    cout << Start << backgroundColor << elsewhereYellow << End;
+                    cout << Start << textColor << letteringWhite << End;
+                    cout << storeWords[i][j];
+                    break;
+                case 2:
+                    cout << Start << boldText << End;
+                    cout << Start << backgroundColor << correctGreen << End;
+                    cout << Start << textColor << letteringWhite << End;
+                    cout << storeWords[i][j];
+                    break;
+                default:
+                    cout << Start << boldText << End;
+                    cout << Start << backgroundColor << wrongGrey << End;
+                    cout << Start << textColor << letteringWhite << End;
+                    cout << storeWords[i][j];
+                    break;
+            }
+        }
+        cout << endl;
+    }
+    // reset formatting
+    cout << Reset << endl;
 }
 
 int main() {
