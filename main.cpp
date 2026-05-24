@@ -219,32 +219,59 @@ int main() {
 
     // get random word from answerWordList
     string answerWord = getRandomWord(answerWordList);
-
     string guessWord;
 
-    int guessCounter = 0;
+    // for testing
+    cout << answerWord << endl;
 
-    while(guessCounter < 6)
-    {
+    int guessCounter = 0;
+    int markCounter = 0;
+
+    vector<vector<string>> storeWords;
+    vector<array<int, 5>> storeMarks;
+    vector<string> answerWordLetters = wordLetters(answerWord);
+
+
+    // main game loop
+    while (guessCounter < 6) {
         cout << "Podaj słowo: ";
         cin >> guessWord;
         string guessUpper = toUpperCasePolish(guessWord);
+
         while(validateGuessWord(guessUpper, dictionary) != true)
         {
             cout << "Niepoprawne słowo! Podaj nowe: ";
             cin >> guessWord;
             guessUpper = toUpperCasePolish(guessWord);
         }
-        if(answerWord == guessUpper)
-        {
+
+        vector<string> guessUpperLetters = wordLetters(guessUpper);
+        array<int, 5> letterMarks = compareGuess(answerWordLetters, guessUpperLetters);
+        system("cls");
+
+        // store words and marking for their letters
+        storeWords.push_back(guessUpperLetters);
+        storeMarks.push_back(letterMarks);
+
+        // for testing
+        cout << answerWord << endl;
+
+        renderBoard(storeWords, storeMarks);
+
+        for (int i = 0; i < 5; i++) {
+            if (letterMarks[i] == 2)
+                markCounter++;
+        }
+
+        if (markCounter == 5) {
             cout << "Poprawna odpowiedź!" << endl;
             break;
         }
-        else
-        {
-            guessCounter++;
-            cout << "Zła odpowiedź! Pozostało " << 6 - guessCounter << " prób."<< endl;
-        }
+
+        markCounter = 0;
+
+        guessCounter++;
+        cout << "Zła odpowiedź! Pozostało " << 6 - guessCounter << " prób."<< endl;
     }
 
     return 0;
