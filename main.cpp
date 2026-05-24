@@ -4,6 +4,20 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <unordered_map>
+#include <array>
+
+// define ANSI escape sequence fragments to improve code readability
+#define Start "\x1b["
+#define textColor "38;2;"
+#define backgroundColor "48;2;"
+#define correctGreen "8;199;30"
+#define letteringWhite "255;255;255"
+#define wrongGrey "80;80;80"
+#define elsewhereYellow "212;157;4"
+#define boldText "1"
+#define End "m"
+#define Reset "\x1b[0m"
 
 using namespace std;
 
@@ -100,6 +114,94 @@ bool validateGuessWord(string guess, const vector<string>& words) {
     return false;
 }
 
+// function that divides a single string into a vector of multiple substrings (letters)
+vector<string> wordLetters(const string& word) {
+    vector<string> result;
+    for (size_t i = 0; i < word.size();) {
+        // Check for 2-byte Polish uppercase letters in UTF-8
+        if (i + 1 < word.size()) {
+            string twoChar = word.substr(i, 2);
+            if (twoChar == "Ą" || twoChar == "Ć" || twoChar == "Ę" || twoChar == "Ł" || twoChar == "Ń" || twoChar == "Ó" || twoChar == "Ś" || twoChar == "Ź" ||twoChar == "Ż") {
+                result.push_back(twoChar);
+                i += 2;
+                continue;
+            }
+        }
+        string oneChar = word.substr(i, 1);
+        result.push_back(oneChar);
+        i++;
+    }
+    return result;
+}
+
+// function that compares user input with answer word
+array<int, 5> compareGuess(const vector<string>& answerWordLetters, const vector<string>& guessUpperLetters) {
+
+    // container of leftover characters from initial comparison
+    unordered_map<int, string> wordCharacter;
+
+    // array of 0s, 1s, 2s used for marking letters of a user-inputted word
+    array<int, 5> letterMarks = {0};
+
+    // 0 - wrong letter, wrong position
+    // 1 - correct letter, wrong position
+    // 2 - correct letter, correct position
+    for (int i = 0; i < 5; i++) {
+        if (answerWordLetters[i] == guessUpperLetters[i]) {
+            letterMarks[i] = 2;
+        } else {
+            wordCharacter[i] = answerWordLetters[i];
+        }
+    }
+
+    for (int i = 0; i < 5; i++) {
+        // check if a letter exists at a specific id of unordered_map
+        if (wordCharacter.find(i) != wordCharacter.end()) {
+            for (int j = 0; j < answerWordLetters.size(); j++) {
+                // mark 1s and 0s for the final result
+                if (wordCharacter[i] == guessUpperLetters[j] && letterMarks[j] == 0) {
+                    letterMarks[j] = 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    return letterMarks;
+}
+
+// function that prints the colored game board
+void renderBoard(const vector<vector<string>>& storeWords, const vector<array<int, 5>>& storeMarks) {
+    // cycle through stored words
+    for (int i = 0; i < storeWords.size(); i++) {
+        // cycle through individual stored letters
+        for (int j = 0; j < storeWords[i].size(); j++) {
+            switch (storeMarks[i][j]) {
+                case 1:
+                    cout << Start << boldText << End;
+                    cout << Start << backgroundColor << elsewhereYellow << End;
+                    cout << Start << textColor << letteringWhite << End;
+                    cout << storeWords[i][j];
+                    break;
+                case 2:
+                    cout << Start << boldText << End;
+                    cout << Start << backgroundColor << correctGreen << End;
+                    cout << Start << textColor << letteringWhite << End;
+                    cout << storeWords[i][j];
+                    break;
+                default:
+                    cout << Start << boldText << End;
+                    cout << Start << backgroundColor << wrongGrey << End;
+                    cout << Start << textColor << letteringWhite << End;
+                    cout << storeWords[i][j];
+                    break;
+            }
+        }
+        cout << endl;
+    }
+    // reset formatting
+    cout << Reset << endl;
+}
 
 int main() {
     // fix Polish character encoding in console (output & input)
@@ -117,32 +219,59 @@ int main() {
 
     // get random word from answerWordList
     string answerWord = getRandomWord(answerWordList);
-
     string guessWord;
 
-    int guessCounter = 0;
+    // for testing
+    cout << answerWord << endl;
 
-    while(guessCounter < 6)
-    {
+    int guessCounter = 0;
+    int markCounter = 0;
+
+    vector<vector<string>> storeWords;
+    vector<array<int, 5>> storeMarks;
+    vector<string> answerWordLetters = wordLetters(answerWord);
+
+
+    // main game loop
+    while (guessCounter < 6) {
         cout << "Podaj słowo: ";
         cin >> guessWord;
         string guessUpper = toUpperCasePolish(guessWord);
+
         while(validateGuessWord(guessUpper, dictionary) != true)
         {
             cout << "Niepoprawne słowo! Podaj nowe: ";
             cin >> guessWord;
             guessUpper = toUpperCasePolish(guessWord);
         }
-        if(answerWord == guessUpper)
-        {
+
+        vector<string> guessUpperLetters = wordLetters(guessUpper);
+        array<int, 5> letterMarks = compareGuess(answerWordLetters, guessUpperLetters);
+        system("cls");
+
+        // store words and marking for their letters
+        storeWords.push_back(guessUpperLetters);
+        storeMarks.push_back(letterMarks);
+
+        // for testing
+        cout << answerWord << endl;
+
+        renderBoard(storeWords, storeMarks);
+
+        for (int i = 0; i < 5; i++) {
+            if (letterMarks[i] == 2)
+                markCounter++;
+        }
+
+        if (markCounter == 5) {
             cout << "Poprawna odpowiedź!" << endl;
             break;
         }
-        else
-        {
-            guessCounter++;
-            cout << "Zła odpowiedź! Pozostało " << 6 - guessCounter << " prób."<< endl;
-        }
+
+        markCounter = 0;
+
+        guessCounter++;
+        cout << "Zła odpowiedź! Pozostało " << 6 - guessCounter << " prób."<< endl;
     }
 
     return 0;
