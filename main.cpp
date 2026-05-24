@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <unordered_map>
+#include <array>
 
 using namespace std;
 
@@ -118,6 +120,42 @@ vector<string> wordLetters(const string& word) {
         i++;
     }
     return result;
+}
+
+// function that compares user input with answer word
+array<int, 5> compareGuess(const vector<string>& answerWordLetters, const vector<string>& guessUpperLetters) {
+
+    // container of leftover characters from initial comparison
+    unordered_map<int, string> wordCharacter;
+
+    // array of 0s, 1s, 2s used for marking letters of a user-inputted word
+    array<int, 5> letterMarks = {0};
+
+    // 0 - wrong letter, wrong position
+    // 1 - correct letter, wrong position
+    // 2 - correct letter, correct position
+    for (int i = 0; i < 5; i++) {
+        if (answerWordLetters[i] == guessUpperLetters[i]) {
+            letterMarks[i] = 2;
+        } else {
+            wordCharacter[i] = answerWordLetters[i];
+        }
+    }
+
+    for (int i = 0; i < 5; i++) {
+        // check if a letter exists at a specific id of unordered_map
+        if (wordCharacter.find(i) != wordCharacter.end()) {
+            for (int j = 0; j < answerWordLetters.size(); j++) {
+                // mark 1s and 0s for the final result
+                if (wordCharacter[i] == guessUpperLetters[j] && letterMarks[j] == 0) {
+                    letterMarks[j] = 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    return letterMarks;
 }
 
 int main() {
