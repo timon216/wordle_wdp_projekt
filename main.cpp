@@ -72,7 +72,7 @@ string toUpperCasePolish(string word) {
     string result = "";
 
     for (size_t i = 0; i < word.size();) {
-        // Check for 2-byte Polish uppercase letters
+        // Check for 2-byte Polish lowercase letters
         if (i + 1 < word.size()) {
             string twoChar = word.substr(i, 2);
 
@@ -87,7 +87,7 @@ string toUpperCasePolish(string word) {
             if (twoChar == "ż") { result += "Ż"; i += 2; continue; }
         }
 
-        // change ASCII uppercase to lowercase
+        // change ASCII lowercase to uppercase
         if (word[i] >= 'a' && word[i] <= 'z') {
             result += char(word[i] - 32);
         }
