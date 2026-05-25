@@ -1,10 +1,12 @@
 #include <iostream>
+#include <algorithm>
 #include <windows.h>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <random>
 #include <unordered_map>
+#include <unordered_set>
 #include <array>
 
 // define ANSI escape sequence fragments to improve code readability
@@ -99,19 +101,15 @@ string toUpperCasePolish(string word) {
     return result;
 }
 
-bool validateGuessWord(string guess, const vector<string>& words) {
+bool validateGuessWord(const string& guess, const unordered_set<string>& words) {
     int length = countLetters(guess);
 
     if (length != 5) {
         cout << "Twoje słowo musi mieć 5 liter" << endl;
         return false;
     }
-    for (int i = 0; i < words.size(); i++) {
-        if (guess == words[i]) {
-            return true;
-        }
-    }
-    return false;
+
+    return words.find(guess) != words.end();
 }
 
 // function that divides a single string into a vector of multiple substrings (letters)
@@ -209,8 +207,11 @@ int main() {
     SetConsoleCP(CP_UTF8);
 
     // load dictionaries
-    vector<string> dictionary = loadWordsFromFile("../dictionary.txt");
+    vector<string> dictionaryVector = loadWordsFromFile("../dictionary.txt");
     vector<string> answerWordList = loadWordsFromFile("../answer_word_list.txt");
+
+    // convert dictionary to unordered_set
+    unordered_set<string> dictionary(dictionaryVector.begin(), dictionaryVector.end());
 
     if (dictionary.empty() || answerWordList.empty()) {
         cerr << "Błąd: Nie udało się wczytać słowników!" << endl;
