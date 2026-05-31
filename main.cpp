@@ -20,6 +20,7 @@
 #define boldText "1"
 #define End "m"
 #define Reset "\x1b[0m"
+#define patrioticRed "255;0;0"
 
 using namespace std;
 
@@ -199,6 +200,34 @@ void renderBoard(const vector<vector<string>>& storeWords, const vector<array<in
     }
     // reset formatting
     cout << Reset << endl;
+}
+
+void printTitle() {
+    string logo[10] = {"  +++++++++++++++++  +++++++++++++++++  +++++++++++++++++  ++++++++++++++++++  +++++++++++++++++  +++++++++++++++++  ",
+                      "  +++++++++++++++++  +++++++++++++++++  +++++++++++++++++  ++++++++++++++++++  +++++++++++++++++  +++++++++++++++++  ",
+                      "  ++oo+++ooo+++oo++  +++++ooooooo+++++  ++++oooooooo+++++  ++++oooooooo++++++  ++++ooo++++++++++  +++++ooooooo+++++  ",
+                      "  ++oo++ooooo++oo++  ++++ooo+++ooo++++  ++++ooo+++ooo++++  ++++ooo+++oooo++++  ++++ooo++++++++++  +++++oo++++++++++  ",
+                      "  +++oo+oo+oo+oo+++  ++++oo+++++oo++++  ++++oooooooo+++++  ++++ooo++++ooo++++  ++++ooo++++++++++  +++++oooooo++++++  ",
+                      "  +++ooooo+ooooo+++  ++++ooo+++ooo++++  ++++ooo+++ooo++++  ++++ooo+++oooo++++  ++++ooo++++++++++  +++++oo++++++++++  ",
+                      "  ++++ooo+++ooo++++  +++++ooooooo+++++  ++++ooo+++ooo++++  ++++oooooooo++++++  ++++oooooooo+++++  +++++ooooooo+++++  ",
+                      "  +++++++++++++++++  +++++++++++++++++  +++++++++++++++++  ++++++++++++++++++  +++++++++++++++++  +++++++++++++++++  ",
+                      "  +++++++++++++++++  +++++++++++++++++  +++++++++++++++++  ++++++++++++++++++  +++++++++++++++++  +++++++++++++++++  ",};
+
+	for(int i = 0; i < 9; i++)
+	{
+		string logo_line = logo[i];
+		for(int j = 0; j < logo_line.size(); j++)
+		{
+			if(logo_line[j] == '+')
+			cout << Start << backgroundColor << correctGreen << End << Start << textColor << correctGreen << End << logo_line[j] << Reset;
+			else if(logo_line[j] == 'o')
+			cout << Start << backgroundColor << letteringWhite << End << Start << textColor << letteringWhite << End << logo_line[j] << Reset;
+			else cout << " ";
+		}
+		cout << endl;
+	}
+    cout << "                                                                                                      ";
+    cout << Start << backgroundColor << patrioticRed << End  << Start << textColor << letteringWhite << End  << Start << boldText << End << "WERSJA POLSKA" << Reset << endl;
 }
 
 int main() {
