@@ -21,6 +21,7 @@
 #define End "m"
 #define Reset "\x1b[0m"
 #define patrioticRed "255;0;0"
+#define Tab "\t\t\t"
 
 using namespace std;
 
@@ -106,7 +107,7 @@ bool validateGuessWord(const string& guess, const unordered_set<string>& words) 
     int length = countLetters(guess);
 
     if (length != 5) {
-        cout << "Twoje słowo musi mieć 5 liter" << endl;
+        cout << Tab "Twoje słowo musi mieć 5 liter" << endl;
         return false;
     }
 
@@ -173,6 +174,8 @@ array<int, 5> compareGuess(const vector<string>& answerWordLetters, const vector
 void renderBoard(const vector<vector<string>>& storeWords, const vector<array<int, 5>>& storeMarks) {
     // cycle through stored words
     for (int i = 0; i < storeWords.size(); i++) {
+        cout << Reset;
+        cout << Tab;
         // cycle through individual stored letters
         for (int j = 0; j < storeWords[i].size(); j++) {
             switch (storeMarks[i][j]) {
@@ -247,62 +250,117 @@ int main() {
         return 1;
     }
 
-    // get random word from answerWordList
-    string answerWord = getRandomWord(answerWordList);
-    string guessWord;
+    printTitle();
 
-    // for testing
-    cout << answerWord << endl;
+    cout << Tab "Odgadnij 5-literowe słowo w 6 próbach."<< endl;
+    cout << Tab "Po każdej próbie otrzymasz wskazówkę:" << endl;
+    cout << Tab  "- litera na właściwym miejscu: kolor zielony"<< endl;
+    cout << Tab  "- litera występuje w słowie, ale jest w złym miejscu: kolor żółty"<< endl;
+    cout << Tab "- litery nie ma w słowie: kolor szary"<< endl;
+    cout << Tab "[1] Start" << endl;
+    cout << Tab "[2] Wyjście z gry" << endl;
 
-    int guessCounter = 0;
-    int markCounter = 0;
+    string option;
 
-    vector<vector<string>> storeWords;
-    vector<array<int, 5>> storeMarks;
-    vector<string> answerWordLetters = wordLetters(answerWord);
+    while (option != "1" && option != "2") {
+        cout << Tab "Wpisz liczbę: ";
+        cin >> option;
 
-
-    // main game loop
-    while (guessCounter < 6) {
-        cout << "Podaj słowo: ";
-        cin >> guessWord;
-        string guessUpper = toUpperCasePolish(guessWord);
-
-        while(validateGuessWord(guessUpper, dictionary) != true)
-        {
-            cout << "Niepoprawne słowo! Podaj nowe: ";
-            cin >> guessWord;
-            guessUpper = toUpperCasePolish(guessWord);
-        }
-
-        vector<string> guessUpperLetters = wordLetters(guessUpper);
-        array<int, 5> letterMarks = compareGuess(answerWordLetters, guessUpperLetters);
-        system("cls");
-
-        // store words and marking for their letters
-        storeWords.push_back(guessUpperLetters);
-        storeMarks.push_back(letterMarks);
-
-        // for testing
-        cout << answerWord << endl;
-
-        renderBoard(storeWords, storeMarks);
-
-        for (int i = 0; i < 5; i++) {
-            if (letterMarks[i] == 2)
-                markCounter++;
-        }
-
-        if (markCounter == 5) {
-            cout << "Poprawna odpowiedź!" << endl;
+        if (option == "1") {
+            system("CLS");
             break;
         }
-
-        markCounter = 0;
-
-        guessCounter++;
-        cout << "Zła odpowiedź! Pozostało " << 6 - guessCounter << " prób."<< endl;
+        if (option == "2") {
+            return 1;
+        }
+            cout << Tab "Podano niepoprawną opcję" << endl;
     }
+
+    bool replay = true;
+
+   while (replay==true) {
+       // get random word from answerWordList
+       string answerWord = getRandomWord(answerWordList);
+       string guessWord;
+
+       int guessCounter = 0;
+       int markCounter = 0;
+
+       vector<vector<string>> storeWords;
+       vector<array<int, 5>> storeMarks;
+       vector<string> answerWordLetters = wordLetters(answerWord);
+
+       // main game loop
+       replay = false;
+       while (guessCounter < 6) {
+           cout << Tab "Podaj słowo: ";
+           cin >> guessWord;
+           string guessUpper = toUpperCasePolish(guessWord);
+
+           while(validateGuessWord(guessUpper, dictionary) != true)
+           {
+               cout << Tab "Niepoprawne słowo! Podaj nowe: ";
+               cin >> guessWord;
+               guessUpper = toUpperCasePolish(guessWord);
+           }
+
+           vector<string> guessUpperLetters = wordLetters(guessUpper);
+           array<int, 5> letterMarks = compareGuess(answerWordLetters, guessUpperLetters);
+           system("cls");
+
+           // store words and marking for their letters
+           storeWords.push_back(guessUpperLetters);
+           storeMarks.push_back(letterMarks);
+
+           renderBoard(storeWords, storeMarks);
+
+           for (int i = 0; i < 5; i++) {
+               if (letterMarks[i] == 2)
+                   markCounter++;
+           }
+
+           if (markCounter == 5) {
+               cout << Tab "Poprawna odpowiedź!" << endl;
+               break;
+           }
+
+           markCounter = 0;
+
+           guessCounter++;
+           cout << Tab "Zła odpowiedź! Pozostało " << 6 - guessCounter << " prób."<< endl;
+       }
+
+       system("CLS");
+       printTitle();
+       cout << Tab "Koniec gry!"<< endl << endl;
+       renderBoard(storeWords, storeMarks);
+
+       if (guessCounter == 6) {
+           cout << Tab "Przegrałes!" << endl;
+       }
+       else {
+           cout << Tab "Wygrałeś!" << endl;
+           cout << Tab "Udało ci się zgadnąć za " << guessCounter+1 << ". razem!" << endl;
+       }
+       cout << Tab "[1] Zagraj ponownie" << endl;
+       cout << Tab "[2] Wyjście z gry" << endl;
+       option="";
+
+       while (option != "1" && option != "2") {
+           cout << Tab "Wpisz liczbę: ";
+           cin >> option;
+
+           if (option == "1") {
+               system("CLS");
+               replay = true;
+               break;
+           }
+           if (option == "2") {
+               return 1;
+           }
+           cout << Tab "Podano niepoprawną opcję" << endl;
+       }
+   }
 
     return 0;
 }
