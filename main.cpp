@@ -1,5 +1,4 @@
 #include <iostream>
-#include <algorithm>
 #include <windows.h>
 #include <fstream>
 #include <vector>
@@ -21,7 +20,7 @@
 #define End "m"
 #define Reset "\x1b[0m"
 #define patrioticRed "255;0;0"
-#define Tab "\t\t\t"
+#define Tab "\t\t\t\t\t"
 
 using namespace std;
 
@@ -70,8 +69,8 @@ size_t countLetters(const string& word) {
 }
 
 // function that converts Polish characters to uppercase
-string toUpperCasePolish(string word) {
-    string result = "";
+string toUpperCasePolish(const string &word) {
+    string result;
 
     for (size_t i = 0; i < word.size();) {
         // Check for 2-byte Polish lowercase letters
@@ -115,7 +114,7 @@ bool validateGuessWord(const string& guess, const unordered_set<string>& words) 
 }
 
 // function that divides a single string into a vector of multiple substrings (letters)
-vector<string> wordLetters(const string& word) {
+vector<string> splitWord(const string& word) {
     vector<string> result;
     for (size_t i = 0; i < word.size();) {
         // Check for 2-byte Polish uppercase letters in UTF-8
@@ -138,7 +137,7 @@ vector<string> wordLetters(const string& word) {
 array<int, 5> compareGuess(const vector<string>& answerWordLetters, const vector<string>& guessUpperLetters) {
 
     // container of leftover characters from initial comparison
-    unordered_map<int, string> wordCharacter;
+    unordered_map<int, string> wordCharacters;
 
     // array of 0s, 1s, 2s used for marking letters of a user-inputted word
     array<int, 5> letterMarks = {0};
@@ -150,16 +149,16 @@ array<int, 5> compareGuess(const vector<string>& answerWordLetters, const vector
         if (answerWordLetters[i] == guessUpperLetters[i]) {
             letterMarks[i] = 2;
         } else {
-            wordCharacter[i] = answerWordLetters[i];
+            wordCharacters[i] = answerWordLetters[i];
         }
     }
 
     for (int i = 0; i < 5; i++) {
         // check if a letter exists at a specific id of unordered_map
-        if (wordCharacter.find(i) != wordCharacter.end()) {
+        if (wordCharacters.find(i) != wordCharacters.end()) {
             for (int j = 0; j < answerWordLetters.size(); j++) {
                 // mark 1s and 0s for the final result
-                if (wordCharacter[i] == guessUpperLetters[j] && letterMarks[j] == 0) {
+                if (wordCharacters[i] == guessUpperLetters[j] && letterMarks[j] == 0) {
                     letterMarks[j] = 1;
                     break;
                 }
@@ -254,8 +253,8 @@ int main() {
 
     cout << Tab "Odgadnij 5-literowe słowo w 6 próbach."<< endl;
     cout << Tab "Po każdej próbie otrzymasz wskazówkę:" << endl;
-    cout << Tab  "- litera na właściwym miejscu: kolor zielony"<< endl;
-    cout << Tab  "- litera występuje w słowie, ale jest w złym miejscu: kolor żółty"<< endl;
+    cout << Tab "- litera na właściwym miejscu: kolor zielony"<< endl;
+    cout << Tab "- litera występuje w słowie, ale jest w złym miejscu: kolor żółty"<< endl;
     cout << Tab "- litery nie ma w słowie: kolor szary"<< endl;
     cout << Tab "[1] Start" << endl;
     cout << Tab "[2] Wyjście z gry" << endl;
@@ -288,7 +287,7 @@ int main() {
 
        vector<vector<string>> storeWords;
        vector<array<int, 5>> storeMarks;
-       vector<string> answerWordLetters = wordLetters(answerWord);
+       vector<string> answerWordLetters = splitWord(answerWord);
 
        // main game loop
        replay = false;
@@ -304,7 +303,7 @@ int main() {
                guessUpper = toUpperCasePolish(guessWord);
            }
 
-           vector<string> guessUpperLetters = wordLetters(guessUpper);
+           vector<string> guessUpperLetters = splitWord(guessUpper);
            array<int, 5> letterMarks = compareGuess(answerWordLetters, guessUpperLetters);
            system("cls");
 
@@ -336,10 +335,11 @@ int main() {
        renderBoard(storeWords, storeMarks);
 
        if (guessCounter == 6) {
-           cout << Tab "Przegrałes!" << endl;
+           cout << Tab << Start << textColor << patrioticRed << End << "Przegrałeś!" << Reset <<  endl;
+           cout << Tab "Poprawne hasło: " << Start << boldText << End << answerWord << Reset << endl;
        }
        else {
-           cout << Tab "Wygrałeś!" << endl;
+           cout << Tab << Start << textColor << correctGreen << End << "Wygrałeś!" << Reset << endl;
            cout << Tab "Udało ci się zgadnąć za " << guessCounter+1 << ". razem!" << endl;
        }
        cout << Tab "[1] Zagraj ponownie" << endl;
