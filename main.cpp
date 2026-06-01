@@ -21,7 +21,7 @@
 #define End "m"
 #define Reset "\x1b[0m"
 #define patrioticRed "255;0;0"
-#define Tab "\t\t\t"
+#define Tab "\t\t\t\t\t"
 
 using namespace std;
 
@@ -254,8 +254,8 @@ int main() {
 
     cout << Tab "Odgadnij 5-literowe słowo w 6 próbach."<< endl;
     cout << Tab "Po każdej próbie otrzymasz wskazówkę:" << endl;
-    cout << Tab  "- litera na właściwym miejscu: kolor zielony"<< endl;
-    cout << Tab  "- litera występuje w słowie, ale jest w złym miejscu: kolor żółty"<< endl;
+    cout << Tab "- litera na właściwym miejscu: kolor zielony"<< endl;
+    cout << Tab "- litera występuje w słowie, ale jest w złym miejscu: kolor żółty"<< endl;
     cout << Tab "- litery nie ma w słowie: kolor szary"<< endl;
     cout << Tab "[1] Start" << endl;
     cout << Tab "[2] Wyjście z gry" << endl;
@@ -336,10 +336,11 @@ int main() {
        renderBoard(storeWords, storeMarks);
 
        if (guessCounter == 6) {
-           cout << Tab "Przegrałes!" << endl;
+           cout << Tab << Start << textColor << patrioticRed << End << "Przegrałeś!" << Reset <<  endl;
+           cout << Tab "Poprawne hasło: " << Start << boldText << End << answerWord << Reset << endl;
        }
        else {
-           cout << Tab "Wygrałeś!" << endl;
+           cout << Tab << Start << textColor << correctGreen << End << "Wygrałeś!" << Reset << endl;
            cout << Tab "Udało ci się zgadnąć za " << guessCounter+1 << ". razem!" << endl;
        }
        cout << Tab "[1] Zagraj ponownie" << endl;
