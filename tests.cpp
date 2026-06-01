@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdio>
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <unordered_set>
@@ -32,14 +33,24 @@ private:
 
 // function that creates temp file with given text
 std::string createTempFileWithContent(const std::string& content) {
-    char tempName[L_tmpnam];
-    std::tmpnam(tempName);
+    // Get the temp directory
+    const char* tempDir = std::getenv("TEMP");
+    if (!tempDir) {
+        tempDir = std::getenv("TMP");
+    }
+    if (!tempDir) {
+        tempDir = ".";  // fallback to current directory
+    }
 
-    std::ofstream out(tempName, std::ios::binary);
+    // Create a unique temp filename
+    static int counter = 0;
+    std::string tempPath = std::string(tempDir) + "/wordle_test_" + std::to_string(counter++) + ".txt";
+
+    std::ofstream out(tempPath, std::ios::binary);
     out << content;
     out.close();
 
-    return std::string(tempName);
+    return tempPath;
 }
 
 }
