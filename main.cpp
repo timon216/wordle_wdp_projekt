@@ -217,13 +217,13 @@ void printTitle() {
 
 	for(int i = 0; i < 9; i++)
 	{
-		string logo_line = logo[i];
-		for(int j = 0; j < logo_line.size(); j++)
+		string logoLine = logo[i];
+		for(int j = 0; j < logoLine.size(); j++)
 		{
-			if(logo_line[j] == '+')
-			cout << Start << backgroundColor << correctGreen << End << Start << textColor << correctGreen << End << logo_line[j] << Reset;
-			else if(logo_line[j] == 'o')
-			cout << Start << backgroundColor << letteringWhite << End << Start << textColor << letteringWhite << End << logo_line[j] << Reset;
+			if(logoLine[j] == '+')
+			cout << Start << backgroundColor << correctGreen << End << Start << textColor << correctGreen << End << logoLine[j] << Reset;
+			else if(logoLine[j] == 'o')
+			cout << Start << backgroundColor << letteringWhite << End << Start << textColor << letteringWhite << End << logoLine[j] << Reset;
 			else cout << " ";
 		}
 		cout << endl;
